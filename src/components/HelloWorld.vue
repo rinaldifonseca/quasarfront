@@ -19,7 +19,21 @@
 email
 <input type="email" v-model="email" class="form-control" id="email" placeholder="Username (your work email)">
 <button type="button" class="btn btn-primary btn-block inactive" @click="submit">Log in</button>
+
+
+<q-input outlined v-model="date">
+      <template v-slot:append>
+        <q-icon name="event" class="cursor-pointer">
+          <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+            <q-date v-model="date" mask="DD-MM-YYYY"
+                    @input="() => $refs.qDateProxy.hide()"/>
+          </q-popup-proxy>
+        </q-icon>
+      </template>
+</q-input>
+
 </template>
+
 
 
     <template v-slot:top-right>
@@ -50,6 +64,7 @@ export default {
   name: 'HelloWorld',
   data () {
     return {
+      date: "",
       email: "",
       filter: "",
       loading: false,
@@ -110,7 +125,7 @@ export default {
       // (using Axios here, but can be anything; parameters vary based on backend implementation)
 
       axios
-      .get('/api/v1/foo.json' + "?page=" +  pagination.page + "&filter=" + this.email)
+      .get('/api/v1/foo.json' + "?page=" +  pagination.page + "&filter=" + this.email +  "&date=" + this.date)
       .then(({ data }) => {
         // updating pagination to reflect in the UI
         this.serverPagination = pagination
