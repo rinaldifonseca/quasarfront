@@ -5,13 +5,39 @@
     :data="serverData"
     :columns="columns"
     :filter="filter"
+    :filter-method="myFilter"
+    :columns_filter="true"
     row-key="name"
     :pagination.sync="serverPagination"
     :loading="loading"
     @request="request" >
     <template slot="top-right" >
     </template>
+
+
+    <template v-slot:top-left>
+email
+<input type="email" v-model="email" class="form-control" id="email" placeholder="Username (your work email)">
+<button type="button" class="btn btn-primary btn-block inactive" @click="submit">Log in</button>
+</template>
+
+
+    <template v-slot:top-right>
+          <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+            <template v-slot:append>
+              <q-icon name="search" />
+            </template>
+          </q-input>
+        </template>
+
   </q-table>
+
+
+<div id="example">
+  <button v-on:click="greet">Greet</button>
+</div>
+
+
   </q-page>
 </template>
 
@@ -24,11 +50,12 @@ export default {
   name: 'HelloWorld',
   data () {
     return {
-      filter: '',
+      email: "",
+      filter: "",
       loading: false,
       serverPagination: {
         page: 1,
-        rowsNumber: 100 // specifying this determines pagination is server-side
+        rowsNumber: 100, // specifying this determines pagination is server-side
       },
 
       serverData: [],
@@ -45,6 +72,32 @@ export default {
     }
   },
   methods: {
+    submit () {
+    this.request({
+      pagination: this.serverPagination,
+      filter: this.filter
+    })
+    },
+    greet () {
+      // `this` inside methods point to the Vue instance
+      //alert('Hello ' + this.name + '!')
+      // `event` is the native DOM event
+
+
+    this.request({
+      pagination: this.serverPagination,
+      filter: this.filter
+    })
+    },
+
+    myFilter (rows, terms, cols, cellValue) {
+      alert(rows)
+      const lowerTerms = terms ? terms.toLowerCase() : ''
+      return rows.filter(
+        row => cols.some(col => (cellValue(col, row) + '').toLowerCase().indexOf(lowerTerms) !== -1)
+      )
+    },
+
     request ({ pagination, filter }) {
       // we set QTable to "loading" state
       this.loading = true
@@ -57,7 +110,7 @@ export default {
       // (using Axios here, but can be anything; parameters vary based on backend implementation)
 
       axios
-      .get('/api/v1/foo.json' + "?page=" +  pagination.page)
+      .get('/api/v1/foo.json' + "?page=" +  pagination.page + "&filter=" + this.email)
       .then(({ data }) => {
         // updating pagination to reflect in the UI
         this.serverPagination = pagination
@@ -83,6 +136,7 @@ export default {
   },
   mounted () {
     // once mounted, we need to trigger the initial server data fetch
+//    this.greet();
     this.request({
       pagination: this.serverPagination,
       filter: this.filter
