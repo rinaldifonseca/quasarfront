@@ -5,7 +5,6 @@
     :data="serverData"
     :columns="columns"
     :filter="filter"
-    :filter-method="myFilter"
     :columns_filter="true"
     row-key="name"
     :pagination.sync="serverPagination"
@@ -18,7 +17,7 @@
     <template v-slot:top-left>
 email
 <input type="email" v-model="email" class="form-control" id="email" placeholder="Username (your work email)">
-<button type="button" class="btn btn-primary btn-block inactive" @click="submit">Log in</button>
+<button type="button" class="btn btn-primary btn-block inactive" @click="submit">Filtrar</button>
 
 
 <q-input outlined v-model="date">
@@ -103,14 +102,6 @@ export default {
       pagination: this.serverPagination,
       filter: this.filter
     })
-    },
-
-    myFilter (rows, terms, cols, cellValue) {
-      alert(rows)
-      const lowerTerms = terms ? terms.toLowerCase() : ''
-      return rows.filter(
-        row => cols.some(col => (cellValue(col, row) + '').toLowerCase().indexOf(lowerTerms) !== -1)
-      )
     },
 
     request ({ pagination, filter }) {
