@@ -1,4 +1,5 @@
 <template>
+<div>
   <q-page class="flex flex-center">
    <q-table
     ref="table"
@@ -13,6 +14,12 @@
     <template slot="top-right" >
     </template>
 
+        <template v-slot:body-cell-actions="props">
+          <q-td :props="props">
+            <q-btn dense round flat color="grey" @click="basic = true" icon="edit"></q-btn>
+            <q-btn dense round flat color="grey" @click="deleteRow(props)" icon="delete"></q-btn>
+          </q-td>
+        </template>
 
     <template v-slot:top-left>
 email
@@ -52,6 +59,25 @@ email
 
 
   </q-page>
+
+<q-dialog v-model="basic">
+  <q-card>
+    <q-card-section>
+      <div class="text-h6">Terms of Agreement</div>
+    </q-card-section>
+
+    <q-card-section class="q-pt-none">
+      <p v-for="n in 15" :key="n">Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum repellendus sit voluptate voluptas eveniet porro. Rerum blanditiis perferendis totam, ea at omnis vel numquam exercitationem aut, natus minima, porro labore.</p>
+    </q-card-section>
+
+    <q-card-actions align="right">
+      <q-btn flat label="Decline" color="primary" v-close-popup />
+      <q-btn flat label="Accept" color="primary" v-close-popup />
+    </q-card-actions>
+  </q-card>
+</q-dialog>
+
+</div>
 </template>
 
 <style>
@@ -81,8 +107,11 @@ export default {
         { name: 'protein', label: 'Protein (g)', field: 'protein' },
         { name: 'sodium', label: 'Sodium (mg)', field: 'sodium' },
         { name: 'calcium', label: 'Calcium (%)', field: 'calcium', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) },
-        { name: 'iron', label: 'Iron (%)', field: 'iron', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) }
-      ]
+        { name: 'iron', label: 'Iron (%)', field: 'iron', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) },
+        { name: 'actions', label: 'Actions', field: '', align:'center' }
+      ],
+
+      basic: false,
     }
   },
   methods: {
